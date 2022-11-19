@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class MainVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,4 +20,9 @@ class ViewController: UIViewController {
         self.navigationItem.title = "NBU API"
         self.navigationItem.titleView?.tintColor = .white
     }
+}
+
+//MARK: - SearchBar -
+extension MainVC {
+    
 }
