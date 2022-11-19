@@ -8,12 +8,16 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        self.view.backgroundColor = .white
+        self.settingNavBar()
     }
-
-
+    
+    private func settingNavBar() {
+        self.navigationController?.navigationBar.backgroundColor = .green
+        self.navigationItem.title = "NBU API"
+        self.navigationItem.titleView?.tintColor = .white
+    }
 }
-
