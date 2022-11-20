@@ -8,7 +8,16 @@
 import UIKit
 
 class MainVC: UITableViewController {
-    var currencyElements: [Сurrency] = []
+    private var currencyElements: [Сurrency] = []
+    private let searchControllerCurrency = UISearchController(searchResultsController: nil)
+    private var filteringCurrencyElements: [Сurrency] = []
+    private var searchBarIsEmpty: Bool {
+        guard let text = self.searchControllerCurrency.searchBar.text else { return false }
+        return text.isEmpty
+    }
+    private var isFiltering: Bool {
+        return searchControllerCurrency.isActive && !self.searchBarIsEmpty
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -18,6 +27,7 @@ class MainVC: UITableViewController {
             self.tableView.reloadData()
             print("success")
         }
+        self.settingSearchControllerCurrency()
         print(self.currencyElements.count)
     }
     
@@ -47,6 +57,9 @@ class MainVC: UITableViewController {
 //MARK: - TableViewDataSource -
 extension MainVC {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if isFiltering {
+            return self.filteringCurrencyElements.count
+        }
         return self.currencyElements.count
     }
     
@@ -56,7 +69,14 @@ extension MainVC {
         if cell == nil {
             cell = CellInfoCurrency.init(style: .value1, reuseIdentifier: idCell)
         }
-        let currency = self.currencyElements[indexPath.row]
+
+        var currency: Сurrency
+        if isFiltering {
+            currency = self.filteringCurrencyElements[indexPath.row]
+        } else {
+            currency = self.currencyElements[indexPath.row]
+        }
+        
         cell?.label.text = "\(currency.txt) (\(currency.cc))      \(currency.rate)"
         cell?.selectionStyle = .none
         cell?.backgroundColor = .clear
@@ -73,6 +93,24 @@ extension MainVC {
 }
 
 //MARK: - SearchBar -
-extension MainVC {
+extension MainVC: UISearchResultsUpdating {
+    private func settingSearchControllerCurrency() {
+        self.searchControllerCurrency.searchResultsUpdater = self
+        self.searchControllerCurrency.obscuresBackgroundDuringPresentation = false
+        self.searchControllerCurrency.searchBar.placeholder = "search currency"
+        self.navigationItem.searchController = self.searchControllerCurrency
+        self.definesPresentationContext = true
+    }
     
+    func updateSearchResults(for searchController: UISearchController) {
+        self.filterContentForSearchText(searchController.searchBar.text!)
+    }
+    
+    private func filterContentForSearchText(_ searchText: String) {
+        self.filteringCurrencyElements = self.currencyElements.filter({ currency in
+            return currency.txt.lowercased().contains(searchText.lowercased())
+        })
+        
+        self.tableView.reloadData()
+    }
 }
