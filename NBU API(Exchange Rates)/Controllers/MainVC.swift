@@ -25,7 +25,6 @@ class MainVC: UITableViewController {
         self.settingNavBar()
         self.downloadJSON {
             self.tableView.reloadData()
-            print("success")
         }
         self.settingSearchControllerCurrency()
         print(self.currencyElements.count)
@@ -77,7 +76,8 @@ extension MainVC {
             currency = self.currencyElements[indexPath.row]
         }
         
-        cell?.label.text = "\(currency.txt) (\(currency.cc))      \(currency.rate)"
+        cell?.labelName.text = "\(currency.txt) (\(currency.cc))"
+        cell?.labelNumber.text = "\(currency.rate)"
         cell?.selectionStyle = .none
         cell?.backgroundColor = .clear
         return cell!
@@ -88,7 +88,17 @@ extension MainVC {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath.row)
+        var currency: Сurrency
+        if isFiltering {
+            currency = self.filteringCurrencyElements[indexPath.row]
+        } else {
+            currency = self.currencyElements[indexPath.row]
+        }
+        
+        var detailView = DetailCurrency(frame: .zero)
+        detailView.labelName.text = "\(currency.txt) (\(currency.cc))"
+        detailView.labelRate.text = "1 \(currency.cc) = \(currency.rate) UAN"
+        self.view.addSubview(detailView)
     }
 }
 
